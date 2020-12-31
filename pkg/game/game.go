@@ -6,8 +6,18 @@ package game
 //"time"
 //"github.com/gdamore/tcell/v2"
 
+// ShowMove simple move just to show the current status
+var ShowMove = Move{
+	value: -1,
+}
+
 // Player one of the players of the game
 type Player string
+
+// Move A particular move. Typically a number, but might be different instruction
+type Move struct {
+	value int
+}
 
 // Game a full game
 type Game struct {
@@ -21,13 +31,20 @@ type Game struct {
 // UI an interface
 type UI interface {
 	Show(*Game)
-	InputScore(*Player, *Game) int
+	InputScore(*Player, *Game) Move
 }
 
 func (g *Game) turn() {
 
-	score := g.ui.InputScore(g.whoseTurn(), g)
-	g.scores[g.whoseTurn()] = append(g.scores[g.whoseTurn()], score)
+	for {
+		move := g.ui.InputScore(g.whoseTurn(), g)
+		if move == ShowMove {
+			g.ui.Show(g)
+			continue
+		}
+		g.scores[g.whoseTurn()] = append(g.scores[g.whoseTurn()], move.value)
+		return
+	}
 }
 
 // New a new game
@@ -62,6 +79,7 @@ func (g *Game) whoseTurn() *Player {
 
 // Play the game
 func (g *Game) Play() {
+	g.ui.Show(g)
 	for {
 		g.turn()
 		g.ui.Show(g)

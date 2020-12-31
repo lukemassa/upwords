@@ -14,15 +14,22 @@ import (
 type REPL struct{}
 
 // InputScore enter the score
-func (r REPL) InputScore(player *Player, game *Game) int {
+func (r REPL) InputScore(player *Player, game *Game) Move {
 	for {
 		fmt.Printf("Points for %s: ", *player)
 		var entry string
 		fmt.Scanln(&entry)
-		val, err := strconv.Atoi(entry)
-		if err == nil {
-			return val
+		if entry == "show" {
+			return ShowMove
 		}
+		val, err := strconv.Atoi(entry)
+		if err != nil || val < 0 {
+			continue
+		}
+		return Move{
+			value: val,
+		}
+
 	}
 }
 
