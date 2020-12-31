@@ -21,12 +21,12 @@ type Game struct {
 // UI an interface
 type UI interface {
 	Show(*Game)
-	InputScore(*Player) int
+	InputScore(*Player, *Game) int
 }
 
 func (g *Game) turn() {
 
-	score := g.ui.InputScore(g.whoseTurn())
+	score := g.ui.InputScore(g.whoseTurn(), g)
 	g.scores[g.whoseTurn()] = append(g.scores[g.whoseTurn()], score)
 }
 

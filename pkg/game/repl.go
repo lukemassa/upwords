@@ -14,7 +14,7 @@ import (
 type REPL struct{}
 
 // InputScore enter the score
-func (r REPL) InputScore(player *Player) int {
+func (r REPL) InputScore(player *Player, game *Game) int {
 	for {
 		fmt.Printf("Points for %s: ", *player)
 		var entry string
