@@ -1,14 +1,10 @@
 package game
 
-import (
-	"fmt"
-	"strconv"
-	//	"strconv"
-	//"math/rand"
-	//"os"
-	//"time"
-	//"github.com/gdamore/tcell/v2"
-)
+//	"strconv"
+//"math/rand"
+//"os"
+//"time"
+//"github.com/gdamore/tcell/v2"
 
 // Player one of the players of the game
 type Player string
@@ -19,37 +15,23 @@ type Game struct {
 	player2     *Player
 	player1turn bool
 	scores      map[*Player][]int
+	ui          UI
 }
 
 // UI an interface
 type UI interface {
-	Show()
+	Show(*Game)
 	InputScore(*Player) int
 }
 
-func (g *Game) inputScore(player *Player) int {
-	for {
-		fmt.Printf("Points for %s: ", *player)
-		var entry string
-		fmt.Scanln(&entry)
-		if entry == "show" {
-			g.Show()
-			continue
-		}
-		val, err := strconv.Atoi(entry)
-		if err == nil {
-			return val
-		}
-	}
-}
 func (g *Game) turn() {
 
-	score := g.inputScore(g.whoseTurn())
+	score := g.ui.InputScore(g.whoseTurn())
 	g.scores[g.whoseTurn()] = append(g.scores[g.whoseTurn()], score)
 }
 
 // New a new game
-func New(player1, player2 *Player) Game {
+func New(player1, player2 *Player, ui UI) Game {
 	g := Game{
 		player1: player1,
 		player2: player2,
@@ -57,6 +39,7 @@ func New(player1, player2 *Player) Game {
 			player1: make([]int, 0),
 			player2: make([]int, 0),
 		},
+		ui: ui,
 	}
 	return g
 
@@ -77,17 +60,11 @@ func (g *Game) whoseTurn() *Player {
 	return g.player2
 }
 
-// Show the current situation
-func (g *Game) Show() {
-	fmt.Printf("%s: %d\n", *g.player1, g.score(g.player1))
-	fmt.Printf("%s: %d\n", *g.player2, g.score(g.player2))
-}
-
 // Play the game
 func (g *Game) Play() {
 	for {
 		g.turn()
-		g.Show()
+		g.ui.Show(g)
 		g.player1turn = !g.player1turn
 	}
 }
